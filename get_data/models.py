@@ -17,6 +17,9 @@ class Hotel(models.Model):
     traffic = models.IntegerField(default=0)
     price = models.IntegerField(default=0)
 
+    def __str__(self):
+        return '[%s]%s' % (self.city, self.name)
+
 
 class Comment(models.Model):
     hotel = models.CharField(max_length=10)
