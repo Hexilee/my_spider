@@ -25,7 +25,7 @@ SECRET_KEY = 'skle^*&l6ec%3t-1lko11j+62h3o0mt&2smg_g^mkbzu!k+0x9'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['testserver', 'hexixi.top']
+ALLOWED_HOSTS = ['testserver', 'hexixi.top', 'server.hexixi.top', ]
 
 # Application definition
 
@@ -76,7 +76,7 @@ WSGI_APPLICATION = 'spider.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'NAME': os.path.join(os.path.dirname(BASE_DIR), 'db.sqlite3'),
     }
 }
 

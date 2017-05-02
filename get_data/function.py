@@ -37,16 +37,14 @@ def get_hotel(driver: WebDriver, city: str, n: int) -> None:
         comment_count = RE_COMMENT.search(comment_about).group()
         logging.info('%s\n%s\n%s\n%s\n%s\n%s\n%s\n' % (city, hid, name, n, points, start_price, comment_count))
 
-        Hotel.objects.create(city=city, hid=hid, name=name, page=n, points=points, start_price=start_price,
-                             comments_count=comment_count)
+        Hotel.objects.update_or_create(city=city, hid=hid, name=name, page=n, points=points, start_price=start_price,
+                                       comments_count=comment_count)
 
 
 def spider(city: str) -> None:
     driver = webdriver.PhantomJS()
     for n in range(8, 161, 8):
         get_hotel(driver, city, n)
-
-
 
 
 if __name__ == '__main__':
