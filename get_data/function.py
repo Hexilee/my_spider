@@ -33,12 +33,12 @@ def get_hotel(driver: WebDriver, city: str, n: int) -> None:
         except Exception:
             continue
         start_price = hotel.find_element_by_class_name('J_price_lowList').text
-        comment_about = hotel.find_element_by_class_name('hotel_judgement').text
-        comment_count = RE_COMMENT.search(comment_about).group()
-        logging.info('%s\n%s\n%s\n%s\n%s\n%s\n%s\n' % (city, hid, name, n, points, start_price, comment_count))
-
-        Hotel.objects.update_or_create(city=city, hid=hid, name=name, page=n, points=points, start_price=start_price,
-                                       comments_count=comment_count)
+        about_points = hotel.find_element_by_class_name('hotel_judgement').text
+        points_count = RE_COMMENT.search(about_points).group()
+        logging.info('%s\n%s\n%s\n%s\n%s\n%s\n%s\n' % (city, hid, name, n, points, start_price, points_count))
+        if Hotel.objects.filter(hid=hid).count() == 0:
+            Hotel.objects.create(city=city, hid=hid, name=name, page=n, points=points, start_price=start_price,
+                                 points_count=points_count)
 
 
 def spider(city: str) -> None:
