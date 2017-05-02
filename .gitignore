@@ -94,8 +94,5 @@ ENV/
 .ropeproject
 
 # My ignore
-spider/
 *.sqlite3
 .idea
-.coverage
-htmlcov/

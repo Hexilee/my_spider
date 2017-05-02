@@ -47,5 +47,7 @@ def spider(city: str) -> None:
         get_hotel(driver, city, n)
 
 
+
+
 if __name__ == '__main__':
     spider('beijing1')
