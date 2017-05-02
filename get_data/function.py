@@ -43,7 +43,7 @@ def get_hotel(driver: WebDriver, city: str, n: int) -> None:
 
 def spider(city: str) -> None:
     driver = webdriver.PhantomJS()
-    for n in range(8, 161, 8):
+    for n in range(1, 161):
         get_hotel(driver, city, n)
 
 

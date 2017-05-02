@@ -7,7 +7,7 @@ from .models import Hotel, Comment
 
 class HotelAdmin(admin.ModelAdmin):
     list_display = ['city', 'name', 'hid', 'page', 'points', 'comments_count']
-    search_fields = ['name', 'hid']
+    search_fields = ['name', 'hid', 'city']
 
 
 admin.site.register(Hotel, HotelAdmin)
