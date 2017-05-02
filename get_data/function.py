@@ -6,6 +6,8 @@ import re
 import json
 from typing import Iterable
 import logging
+import time
+import urllib.error
 
 from .models import Hotel
 
@@ -41,10 +43,16 @@ def get_hotel(driver: WebDriver, city: str, n: int) -> None:
                                  points_count=points_count)
 
 
-def spider(city: str) -> None:
+def spider(city: str, start=1) -> None:
     driver = webdriver.PhantomJS()
-    for n in range(1, 161):
-        get_hotel(driver, city, n)
+    for n in range(start, 161):
+        try:
+            get_hotel(driver, city, n)
+        except (ConnectionRefusedError, urllib.error.URLError, ConnectionResetError, TypeError, AttributeError):
+            driver.close()
+            time.sleep(30)
+            spider(city, n)
+            break
 
 
 if __name__ == '__main__':
