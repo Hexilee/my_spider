@@ -23,6 +23,7 @@ class Hotel(models.Model):
 
 
 class Comment(models.Model):
+    cid = models.CharField(max_length=20, primary_key=True)
     hotel = models.CharField(max_length=10)
     page = models.IntegerField()
     name = models.CharField(max_length=20)
@@ -30,3 +31,5 @@ class Comment(models.Model):
     points = models.FloatField()
     content = models.CharField(max_length=1000)
 
+    def __str__(self):
+        return "[%s]%s" % (self.hotel, self.name)

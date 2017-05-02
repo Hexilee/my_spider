@@ -10,5 +10,10 @@ class HotelAdmin(admin.ModelAdmin):
     search_fields = ['name', 'hid', 'city']
 
 
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ['hotel', 'name', 'page', 'room_type', 'points']
+    search_fields = ['hotel', 'name', 'page', 'room_type']
+
+
 admin.site.register(Hotel, HotelAdmin)
-admin.site.register(Comment)
+admin.site.register(Comment, CommentAdmin)

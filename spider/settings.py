@@ -124,7 +124,8 @@ CITIES = [
     'wuhan477',
 ]
 
-ROOT_URL = 'http://hotels.ctrip.com/hotel/'
+ROOT_URL = 'http://hotels.ctrip.com/hotel'
 
+AGENT_HEADER = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36'
 
 RE_COMMENT = re.compile(r'(\d+)')
