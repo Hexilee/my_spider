@@ -120,5 +120,18 @@ def spider_comments(driver: WebDriver, hid: str, n: int) -> int:
     return 0
 
 
+def stable_spider_comment(driver: WebDriver, hid: str, n: int) -> None:
+    status = spider_comments(driver, hid, n)
+    flag = 0
+    while flag < 3:
+        if status == 403:
+            flag += 1
+            time.sleep(10)
+            status = spider_comments(driver, hid, n)
+        else:
+            break
+    del driver
+
+
 if __name__ == '__main__':
     spider('beijing1')

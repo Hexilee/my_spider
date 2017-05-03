@@ -1,12 +1,13 @@
 from django.http import HttpRequest, HttpResponse, Http404, HttpResponseForbidden
 from .models import Hotel
-from .function import spider, spider_comments
+from .function import spider, spider_comments, stable_spider_comment
 from spider.settings import CITIES, AGENT_HEADER, ALLOWED_HOSTS
 from rest_framework.decorators import api_view
 import requests
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium import webdriver
 import logging
+
 logging.basicConfig(level=logging.INFO)
 
 
@@ -30,7 +31,7 @@ def save_comments(request):
             driver = webdriver.PhantomJS(desired_capabilities=dcap)
             n = 1
             while True:
-                status = spider_comments(driver, hid, n)
+                status = stable_spider_comment(driver, hid, n)
                 if status == 1:
                     break
                 n += 1
@@ -45,6 +46,7 @@ def get_comments(request):
                 hotels = Hotel.objects.filter(page=i)
                 logging.info("\n%s\n" % len(hotels))
                 for hotel in hotels:
-                    resp = requests.get('http://%s:9000/api/get_data/save_comments?hid=%s' % (ALLOWED_HOSTS[0], hotel.hid))
+                    resp = requests.get(
+                        'http://%s:9000/api/get_data/save_comments?hid=%s' % (ALLOWED_HOSTS[0], hotel.hid))
                     logging.info(resp.status_code)
             return HttpResponse()
