@@ -2,6 +2,14 @@ from selenium import webdriver
 from selenium.webdriver.phantomjs.webdriver import WebDriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
+# import os
+# import sys
+# from django.core.wsgi import get_wsgi_application
+#
+# sys.path.extend(['/Users/lichenxi/PycharmProjects/spider', ])
+# os.environ.setdefault("DJANGO_SETTINGS_MODULE", "spider.settings")
+# application = get_wsgi_application()
+
 from spider.settings import ROOT_URL, RE_COMMENT, AGENT_HEADER
 import re
 import json
@@ -9,6 +17,7 @@ from typing import Iterable
 import logging
 import time
 import urllib.error
+import sqlite3
 
 from .models import Hotel, Comment
 
@@ -56,21 +65,19 @@ def spider(city: str, start=1) -> None:
             break
 
 
-def spider_comments(hid: str, n: int) -> int:
-    dcap = dict(DesiredCapabilities.PHANTOMJS)
-    dcap["phantomjs.page.settings.userAgent"] = AGENT_HEADER
-    driver = webdriver.PhantomJS(desired_capabilities=dcap)
-    del dcap
-
+def spider_comments(driver: WebDriver, hid: str, n: int) -> int:
     try:
-        driver.get('%s/dianping/%s_p%st0.html' % (ROOT_URL, hid, n))
+        driver.get('%s/dianping/%s_p%dt0.html' % (ROOT_URL, hid, n))
         driver.implicitly_wait(0.5)
     except (ConnectionRefusedError, urllib.error.URLError, ConnectionResetError, TypeError, AttributeError):
         del driver
         time.sleep(10)
-        return spider_comments(hid, n)
+        return spider_comments(driver, hid, n)
+    try:
+        comment_list = driver.find_elements_by_css_selector('#divCtripComment > div.comment_detail_list')[1]
+    except IndexError:
+        comment_list = driver.find_element_by_css_selector('#divCtripComment > div.comment_detail_list')
 
-    comment_list = driver.find_elements_by_class_name('comment_detail_list')[1]
     comments = comment_list.find_elements_by_class_name('comment_block')
 
     for comment in comments:
@@ -84,6 +91,9 @@ def spider_comments(hid: str, n: int) -> int:
             continue
         logging.info('%s\n%s\n%s\n%s\n%s\n%s\n' % (hid, name, n, room_type, points, content))
 
+        # with sqlite3.connect('../../db.sqlite3') as conn:
+        #     with conn.cursor() as cursor:
+        #         cursor.execute("select * from get_data_comment where (cid=?)", (cid,))
         if Comment.objects.filter(cid=cid).count() == 0:
             Comment.objects.create(cid=cid, content=content, hotel=hid, page=n, points=points, room_type=room_type,
                                    name=name)
