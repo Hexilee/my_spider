@@ -78,7 +78,11 @@ def spider_comments(driver: WebDriver, hid: str, n: int) -> int:
     try:
         comment_list = driver.find_elements_by_css_selector('#divCtripComment > div.comment_detail_list')[1]
     except IndexError:
-        comment_list = driver.find_element_by_css_selector('#divCtripComment > div.comment_detail_list')
+        driver.implicitly_wait(5)
+        try:
+            comment_list = driver.find_elements_by_css_selector('#divCtripComment > div.comment_detail_list')[1]
+        except IndexError:
+            comment_list = driver.find_element_by_css_selector('#divCtripComment > div.comment_detail_list')
 
     if Hotel.objects.filter(hid=hid).count() == 1:
         hotel = Hotel.objects.get(hid=hid)
@@ -131,6 +135,13 @@ def stable_spider_comment(driver: WebDriver, hid: str, n: int) -> None:
         else:
             break
     del driver
+
+
+def float2int(f) -> int:
+    if f % 15 == 0:
+        return int(f / 15)
+
+    return int(f // 15) + 1
 
 
 if __name__ == '__main__':

@@ -1,6 +1,6 @@
 from django.http import HttpRequest, HttpResponse, Http404, HttpResponseForbidden
 from .models import Hotel
-from .function import spider, spider_comments, stable_spider_comment
+from .function import spider, spider_comments, stable_spider_comment, float2int
 from spider.settings import CITIES, AGENT_HEADER, ALLOWED_HOSTS
 from rest_framework.decorators import api_view
 import requests
@@ -31,10 +31,15 @@ def save_comments(request):
             driver = webdriver.PhantomJS(desired_capabilities=dcap)
             n = 1
             while True:
-                status = stable_spider_comment(driver, hid, n)
-                if status == 1:
-                    break
+                if Hotel.objects.filter(hid=hid).count() == 1:
+                    comment_count = Hotel.objects.get(hid=hid).comments_count
+                    if comment_count != 0:
+                        break
+                stable_spider_comment(driver, hid, n)
                 n += 1
+            for i in range(n, float2int(comment_count)):
+                stable_spider_comment(driver, hid, i)
+
     return HttpResponse()
 
 
