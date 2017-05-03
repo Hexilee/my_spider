@@ -31,7 +31,7 @@ def save_comments(request):
             n = 1
             while True:
                 status = spider_comments(driver, hid, n)
-                if status != 0:
+                if status == 1:
                     break
                 n += 1
     return HttpResponse()

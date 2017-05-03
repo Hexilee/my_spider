@@ -66,17 +66,32 @@ def spider(city: str, start=1) -> None:
 
 
 def spider_comments(driver: WebDriver, hid: str, n: int) -> int:
+    if Comment.objects.filter(hotel=hid).filter(page=n).count() == 15:
+        return 0
+
     try:
         driver.get('%s/dianping/%s_p%dt0.html' % (ROOT_URL, hid, n))
         driver.implicitly_wait(0.5)
     except (ConnectionRefusedError, urllib.error.URLError, ConnectionResetError, TypeError, AttributeError):
         del driver
-        time.sleep(10)
-        return spider_comments(driver, hid, n)
+        return 403
     try:
         comment_list = driver.find_elements_by_css_selector('#divCtripComment > div.comment_detail_list')[1]
     except IndexError:
         comment_list = driver.find_element_by_css_selector('#divCtripComment > div.comment_detail_list')
+
+    if Hotel.objects.filter(hid=hid).count() == 1:
+        hotel = Hotel.objects.get(hid=hid)
+        if hotel.comments_count == 0:
+            try:
+                comment_text = driver.find_element_by_css_selector("#commentTab > a").text
+
+                logging.warning("\n%s\n" % comment_text)
+                hotel.comments_count = int(RE_COMMENT.search(comment_text).group())
+                logging.warning("\n%s\n" % hotel.comments_count)
+                hotel.save()
+            except Exception:
+                pass
 
     comments = comment_list.find_elements_by_class_name('comment_block')
 
